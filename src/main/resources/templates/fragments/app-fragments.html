@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec=" https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>App Fragments</title>
+</head>
+
+<body>
+
+<div th:fragment = "nav-default">
+    <header class="d-flex bg_color">
+        <div class="col col-sm-7 mt-2">
+
+             <ul class="nav">
+                 <li sec:authorize="hasAuthority('ADMIN')">
+                    <a class="text-white p-2" th:href="@{/homePage}"><i class="fas fa-home fa-2x"></i></a>
+                 </li>
+                 <li class="nav-item pseudo" sec:authorize="hasAuthority('ADMIN')">
+                     <a class="nav-link text-white" href="#">CHECKLIST</a>
+                        <ul class="bg-light">
+                            <li><a class="text-dark" th:href="@{/checklist/}" title="List checklist">List checklist</a></li>
+                            <li><a class="text-dark" th:href="@{/checklist/create}" title="Create checklist">Create checklist</a></li>
+                        </ul>
+                 </li>
+                 <li class="nav-item pseudo" sec:authorize="hasAuthority('ADMIN')">
+                     <a class="nav-link text-white" href="#">ASSIGNMENT</a>
+                        <ul class="bg-light">
+                            <li><a class="text-dark" th:href="@{/assignment/pageAdmin}" title="All assignment">All assignment</a></li>
+                        </ul>
+                 </li>
+                 <li class="nav-item pseudo">
+                     <a class="nav-link text-white" href="#">MY ASSIGNMENT</a>
+                     <ul class="bg-light">
+                         <li><a class="text-dark" th:href="@{/assignment/}" title="List assignment">List assignment</a></li>
+                     </ul>
+                 </li>
+             </ul>
+        </div>
+        <div class="col col-sm-5 my-2 d-flex justify-content-end">
+            <ul class="nav">
+                <li class="nav-item pseudo d-flex flex-row-reverse">
+                    <a href="#" class="text-white text-center h4 nav-link"><i class="fas fa-cog"></i></a>
+                   <ul class="bg-light">
+                         <li sec:authorize="hasAuthority('ADMIN')"><a class="text-dark" th:href="@{/setting/user/}" title="List user">List user</a></li>
+                         <li sec:authorize="hasAuthority('ADMIN')"><a class="text-dark" th:href="@{/setting/user/add}" title="Add user">Add user</a></li>
+                         <li sec:authorize="hasAuthority('ADMIN')"><a class="text-dark" th:href="@{/setting/role/}" title="Role">Role</a></li>
+                         <li><a class="text-dark" th:href="@{/setting/change_password}" title="Change password">Change password</a></li>
+                   </ul>
+                </li>
+                <li class="d-flex nav-link">
+<!--                    <span>-->
+<!--                        <img th:src="@{${#authentication.getPrincipal().getUserAvatarPath()}}" alt="avatar" class="rounded-circle"-->
+<!--                            style="width: 30px; height:30px">-->
+<!--                    </span>-->
+                    <span>
+                        <img th:src="@{${#authentication.getPrincipal().getAvatar()}}" alt="avatar" class="rounded-circle"
+                             style="width: 30px; height:30px">
+                    </span>
+                    <b class ="text-white pl-2" sec:authentication="name">Username</b>
+                </li>
+                <li>
+                    <form th:action="@{/logout}" method="post" class="hover_form nav-link pl-2">
+                        <input class ="border rounded" type="submit" value="Logout"/>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    <div class="my-1 border-top border-success ">
+    </div>
+</div>
+
+<div th:fragment ="nav-home">
+    <header class="bg_color d-flex">
+        <div class="col col-sm-12 my-2 d-flex justify-content-end">
+          <ul class="nav">
+              <li class="d-flex nav-link">
+<!--                    <span>-->
+<!--                        <img th:src="@{${#authentication.getPrincipal().getUserAvatarPath()}}" alt="avatar" class="rounded-circle"-->
+<!--                             style="width: 30px; height:30px">-->
+<!--                    </span>-->
+                  <span>
+                        <img th:src="@{${#authentication.getPrincipal().getAvatar()}}" alt="avatar" class="rounded-circle"
+                             style="width: 30px; height:30px">
+                  </span>
+                  <b class ="text-white pl-2" sec:authentication="name">Username</b>
+              </li>
+              <li>
+                  <form th:action="@{/logout}" method="post" class="hover_form nav-link pl-2">
+                      <input class ="border rounded" type="submit" value="Logout"/>
+                  </form>
+              </li>
+          </ul>
+        </div>
+    </header>
+    <div class="my-1 border-top border-success ">
+    </div>
+</div>
+
+<div th:fragment="copyright">
+    <footer class="d-flex justify-content-center text-white bg-secondary py-3" >
+        <strong class="px-3">CÔNG TY TNHH...</strong>
+        <strong class="px-3">B133 - ĐƯỜNG SỐ 2 - P. TĂNG NHƠN PHÚ B - QUẬN 9 - TP.HCM</strong>
+        <i class="fas fa-phone-alt  px-3 mt-1"> (123) 456-7890</i>
+        <i class="fas fa-envelope-square px-3 mt-1">
+            <a class="text-white" href="mailto:#">Email: exam.ple@example.com</a>
+        </i>
+    </footer>
+</div>
+
+</body>
+</html>

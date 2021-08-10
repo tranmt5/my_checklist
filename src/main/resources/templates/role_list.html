@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #home-static-resources},
+                                                ~{:: #home-header},
+                                                ~{:: #home-nav},
+                                                ~{:: #home-main-content},
+                                                ~{:: #home-footer}
+                                               )}">
+
+<head>
+    <title>Role List</title>
+</head>
+
+<body>
+    <div id="home-nav" th:replace="~{/fragments/app-fragments :: nav-default}">
+    </div>
+
+    <div id="home-main-content" class="pb-5 mb-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb pl-4 ">
+                <li class="breadcrumb-item pl-1"><a href="#">Setting</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Role</li>
+            </ol>
+        </nav>
+
+
+        <section>
+            <div class="my-3 ml-1 pl-4 h4"><strong>Add role</strong></div>
+
+            <div>
+                <div th:if="${message != null}" class=" alert alert-success text-center">
+                    [[${message}]]
+                </div>
+                <div th:if="${editMessage != null}" class=" alert alert-success text-center">
+                    [[${editMessage}]]
+                </div>
+                <div th:if="${deleteMessage != null}" class=" alert alert-success text-center">
+                    [[${deleteMessage}]]
+                </div>
+            </div>
+
+            <form th:action="@{/setting/role/save}" th:object="${role}" method="POST">
+                <div class="form-group row justify-content-center">
+                    <label class="col-form-label asterisk float-right">Role name:</label>
+                    <input class="col-3 form-control mx-2" type="text" th:field="*{name}" required/>
+                </div>
+
+                <div class="form-group row justify-content-center">
+                    <label class="col-form-label">Description:</label>
+                    <input class="col-3 form-control mx-2" type="text" th:field="*{description}"/>
+                </div>
+
+                <div class="text-center">
+                    <button class="btn btn-success my-3 px-4" type="submit">Save</button>
+                </div>
+
+            </form>
+
+            <div class="my-3 ml-1 pl-4 h4"><strong>All of the roles</strong></div>
+            <div>
+                <table class="table table-hover table-bordered mt-2 text-center">
+                    <thead>
+                        <tr class="bg-secondary text-white">
+                            <th scope="col">No</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Description</th>
+                            <th class="col-2" scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="role : ${roles}">
+                            <td class="text-center" th:text="${role.id}" />
+                            <td class="text-center" th:text="${role.name}" />
+                            <td class="text-center" th:text="${role.description}" />
+                            <td>
+                                <span class="d-flex justify-content-center">
+                                    <a th:href="@{'/setting/role/edit/' + ${role.id}}"><i class="btn btn-outline-secondary text-primary fas fa-edit mr-2"></i></a>
+                                    <a th:data-id="${role.id}"
+                                        th:data-name="${role.name}"
+                                        onclick="showConfirmModalDialogRole(this.getAttribute('data-id'),this.getAttribute('data-name'))">
+                                        <i class="btn btn-outline-warning fas fa-trash-alt text-danger"></i>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+
+            <div class="modal fade" id="roleId" tabindex="-1" role="dialog" aria-labelledby="modalTitle">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirmation</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Do you want to delete role"<span id="roleName"></span>"?
+                        </div>
+                        <div class="modal-footer">
+                            <a id="yesOptionRole" type="button" class="btn btn-danger">Yes</a>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </div>
+
+    <div id="home-footer" th:replace="~{/fragments/app-fragments :: copyright}">
+    </div>
+
+    <th:block id="home-static-resources">
+        <script type="text/javascript" th:src="@{/js/role_list.js}"></script>
+    </th:block>
+
+</body>
+</html>

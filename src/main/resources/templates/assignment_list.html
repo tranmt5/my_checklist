@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec=" https://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #home-static-resources},
+                                                ~{:: #home-header},
+                                                ~{:: #home-nav},
+                                                ~{:: #home-main-content},
+                                                ~{:: #home-footer}
+                                               )}">
+
+<head>
+    <title>My Assignment</title>
+</head>
+<body>
+    <div id="home-nav" th:replace="~{/fragments/app-fragments :: nav-default}">
+    </div>
+
+    <div id="home-main-content">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb pl-4">
+                <li class="breadcrumb-item pl-1"><a href="#">My Assignment</a></li>
+                <li class="breadcrumb-item active" aria-current="page">List</li>
+            </ol>
+        </nav>
+
+        <section>
+            <div>
+                <div th:if="${cancelledAssignment != null}" class="alert alert-success text-center">
+                    [[${cancelledAssignment}]]
+                </div>
+                <th:block th:if="${#lists.isEmpty(listAssignments)}">
+                    <h5 class="text-center my-5">Not found</h5>
+                </th:block>
+                <th:block th:unless="${#lists.isEmpty(listAssignments)}">
+                    <ul th:each="assignment : ${listAssignments}" class="list-group border border-primary border-4 rounded text-center my-4 w-75 box_shadow" style="margin: 0 auto">
+                        <li class="list-group-item bg-secondary text-white" th:text="'Assignee: ' + ${assignment.user}"></li>
+                        <li class="list-group-item font-weight-bold h4 text_shadow text-info" data-toggle="tooltip" data-placement="top" title="Checklist name" th:text="${assignment.checklist.name}"></li>
+                        <li class="list-group-item" th:text="'Assignment Id: ' + ${assignment.id}"></li>
+                        <li class="list-group-item" th:text="'Description: ' + ${assignment.checklist.description}"></li>
+                        <li class="list-group-item" th:text="'Assigned By: ' + ${assignment.assignedBy}"></li>
+                        <li class="list-group-item" th:text="'Assigned At: ' + ${assignment.assignedAt}"></li>
+                        <li class="list-group-item font-weight-bold" th:switch="${assignment.status}">
+                            <i th:case = "0">Status: <span class="text-danger">New</span></i>
+                            <i th:case = "1">Status: <span class="text-primary">In-progress</span></i>
+                            <i th:case = "2">Status: <span class="text-success">Completed</span></i>
+                            <i th:case = "3">Status: <span class="text-warning">Cancelled</span></i>
+                            <i th:case = "4">Status: <span class="text-success">Closed</span></i>
+                        </li>
+                        <li class="list-group-item hover_scale">
+                            <a class="btn btn-outline-secondary text-primary fas fa-step-forward fa-2x py-2 px-4" th:href="@{'/assignment/action/' + ${assignment.id}}">
+                            </a>
+                        </li>
+                    </ul>
+                </th:block>
+            </div>
+
+            <div class="text-center mb-5 pb-5">
+                <div class="h5">Total Items: <b class="text-primary">[[${totalItems}]]</b> - Page [[${currentPage}]] of [[${totalPages}]]</div>
+                <div th:if="${totalPages >1}" class="mt-2">
+                    <nav>
+                        <ul class="pagination justify-content-center flex-wrap">
+                            <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+                                <a class="page-link" th:href="@{/assignment/page/1}">First</a>
+                            </li>
+                            <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+                                <a class="page-link" th:href="@{'/assignment/page/' + ${currentPage - 1}}">Previous</a>
+                            </li>
+                            <th:block th:if="${totalPages <= 10}">
+                                <li th:each="i : ${#numbers.sequence(1,totalPages)}" th:class="${i != currentPage ? 'page-item' : 'page-item disabled'}">
+                                    <a class="page-link" th:href="@{'/assignment/page/'+${i}}">[[${i}]]</a>
+                                </li>
+                            </th:block>
+
+                            <th:block th:if="${totalPages > 10}">
+                                <th:block th:if="${currentPage <= 5 || currentPage >= totalPages - 4}">
+                                    <li th:each="i : ${#numbers.sequence(1,5)}" th:class="${i != currentPage ? 'page-item' : 'page-item disabled'}">
+                                        <a class="page-link" th:href="@{'/assignment/page/'+${i}}" >[[${i}]]</a>
+                                    </li>
+                                    <a class="page-link" th:href="@{/assignment/page/6}">...</a>
+                                    <li th:each="i : ${#numbers.sequence(totalPages - 4,totalPages)}" th:class="${i != currentPage ? 'page-item' : 'page-item disabled'}">
+                                        <a class="page-link" th:href="@{'/assignment/page/'+${i}}">[[${i}]]</a>
+                                    </li>
+                                </th:block>
+                                <th:block th:if="${currentPage > 5 && currentPage < totalPages - 4}">
+                                    <a class="page-link" th:href="@{'/assignment/page/' + ${currentPage - 5}}">...</a>
+                                    <li th:each="i : ${#numbers.sequence(currentPage - 4,currentPage + 4)}" th:class="${i != currentPage ? 'page-item' : 'page-item disabled'}">
+                                        <a class="page-link" th:href="@{'/assignment/page/'+${i}}">[[${i}]]</a>
+                                    </li>
+                                    <a class="page-link" th:href="@{'/assignment/page/' + ${currentPage + 5}}">...</a>
+                                </th:block>
+                            </th:block>
+
+                            <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+                                <a class="page-link" th:href="@{'/assignment/page/' + ${currentPage + 1}}">Next</a>
+                            </li>
+                            <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+                                <a class="page-link" th:href="@{'/assignment/page/' + ${totalPages}}">Last</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="home-footer" th:replace="~{/fragments/app-fragments :: copyright}">
+    </div>
+
+</body>
+</html>

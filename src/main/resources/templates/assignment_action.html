@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec=" https://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #home-static-resources},
+                                                ~{:: #home-header},
+                                                ~{:: #home-nav},
+                                                ~{:: #home-main-content},
+                                                ~{:: #home-footer}
+                                               )}">
+
+<head>
+    <title>Checklist Action</title>
+</head>
+
+<body>
+    <div id="home-nav" th:replace="~{/fragments/app-fragments :: nav-default}">
+    </div>
+
+    <div id="home-main-content" class="pb-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb pl-4">
+                <li class="breadcrumb-item pl-1"><a href="#">My assignment</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Action</li>
+            </ol>
+        </nav>
+
+        <section>
+            <div class="text-center my-4 h5">
+                <b>Checklist name:</b>
+                <span th:text="${assignment.checklist.name}"></span>
+            </div>
+            <table class="table table-hover table-bordered mt-2 mb-4">
+                <thead>
+                    <tr class="text-center">
+                        <th class="col-1">No</th>
+                        <th>ChecklistItems</th>
+                        <th class="col-1">Complete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each= "assign,iState : ${assignmentDetails}" th:assignmentId = "${assignment.Id}"  th:assignmentDetailsId ="${assign.Id}">
+                        <td class="text-center" th:utext="${iState.count} +'. '">No</td>
+                        <td  th:text="${assign.checklistItem.nameItem}"></td>
+                        <td th:switch="${assign.status}" class="d-flex justify-content-center" >
+                            <i th:case= "0" ><a class="fa-2x fas fa-toggle-off" style="color:grey; text-decoration: none" th:href="@{'/assignment/statusItem/completed/' + ${assign.id}}" ></a></i>
+                            <i th:case= "1" ><a class="fa-2x fas fa-toggle-on" style="color:green; text-decoration: none" th:href="@{'/assignment/statusItem/cancelled/' + ${assign.id}}" ></a></i>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+<!--            <div>-->
+<!--                <ol id="list">-->
+<!--                    <li th:each= "assign : ${assignmentDetails}" class="border-bottom border-dark mt-4 clearfix">-->
+<!--                        <span style="width:90%" class="float-left" th:text="${assign.checklistItem.nameItem}"></span>-->
+<!--                        <span th:switch="${assign.status}" class="float-right">-->
+<!--                            <i th:case= "0" ><button><a class="far fa-2x fa-dot-circle" style="color:red" th:href="@{'/assignment/statusItem/' + ${assign.id}}" ></a></button></i>-->
+<!--                            <i th:case= "1" ><button class="far fa-2x fa-dot-circle" style="color:green"></button></i>-->
+<!--                        </span>-->
+<!--                    </li>-->
+<!--                </ol>-->
+
+<!--            </div>-->
+
+            <div>
+                <button class="btn my-3 mx-2" onclick="display_cancelComment()">Cancel</button>
+<!--                <button sec:authorize="hasAuthority('ADMIN')" class="btn my-3 px-4" onclick="display_closeComment()">Close</button>-->
+            </div>
+
+            <div id ="cancelComment" class="d-none mb-5 mt-2">
+                <form th:action="@{/assignment/action/cancel}" th:object="${assignment}" method="POST">
+                    <input type="hidden" th:field="*{id}" readonly="readonly" />
+                    <input type="hidden" th:field="*{checklist}" readonly="readonly" />
+                    <input type="hidden" th:field="*{user}" readonly="readonly" />
+                    <input type="hidden" th:field="*{comment}" readonly="readonly" />
+                    <input type="hidden" th:field="*{assignedBy}" readonly="readonly" />
+                    <input type="hidden" th:field="*{assignedAt}" readonly="readonly" />
+                    <input type="hidden" th:field="*{progress}" readonly="readonly" />
+                    <span class="asterisk mx-2 px-2 mb-5" style="position:relative; top:-134px">Comment:</span>
+                    <textarea rows="2" cols="50" autofocus th:placeholder="comment" th:field="*{reason}" required="required">
+                    </textarea>
+                    <button class="btn btn-success mb-5 mx-2 px-4" type="submit">Submit</button>
+                </form>
+            </div>
+
+        </section>
+    </div>
+
+    <div id="home-footer" th:replace="~{/fragments/app-fragments :: copyright}">
+    </div>
+
+    <th:block id="home-static-resources">
+        <script type="text/javascript" th:src="@{/js/assignment_action.js}"></script>
+    </th:block>
+
+</body>
+</html>

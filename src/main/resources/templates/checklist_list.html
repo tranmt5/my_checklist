@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #home-static-resources},
+                                                ~{:: #home-header},
+                                                ~{:: #home-nav},
+                                                ~{:: #home-main-content},
+                                                ~{:: #home-footer}
+                                               )}">
+
+<head>
+    <title>Checklist List</title>
+</head>
+
+<body>
+    <div id="home-nav" th:replace="~{/fragments/app-fragments :: nav-default}">
+    </div>
+
+    <div id="home-main-content">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb pl-4 ">
+                <li class="breadcrumb-item pl-1"><a href="#">Checklist</a></li>
+                <li class="breadcrumb-item active" aria-current="page">List checklist</li>
+            </ol>
+        </nav>
+
+        <section>
+            <form th:action="@{/checklist/}" method="GET">
+                <div class="d-flex flex-row my-3">
+                    <div class="col col-9 row">
+                        <label class="col col-3 h5 mt-2 ml-2">Checklist name:</label>
+                        <input type="text" class="form-control col col-4 font-weight-bold" name="keyword" required="required" placeholder="Search...">
+                        <div class="text-center col col-1"><button class="btn btn-success px-4" type="submit"><i class="fas fa-search"></i></button>
+                        </div>
+                        <div class="text-center col col-1 float-right"><a class="btn btn-success " th:href="@{/checklist/}"><i class="fas fa-undo-alt"></i></a></div>
+                    </div>
+                    <div class="col mr-2">
+                        <a class="btn btn-success float-right" th:href="@{/checklist/create}">Create a new checklist</a>
+                    </div>
+                </div>
+            </form>
+
+            <div>
+                <div th:if="${messageAssignment != null}" class=" alert alert-success text-center">
+                    [[${messageAssignment}]]
+                </div>
+                <div th:if="${editMessage != null}" class=" alert alert-success text-center">
+                    [[${editMessage}]]
+                </div>
+                <div th:if="${deleteMessage != null}" class=" alert alert-success text-center">
+                    [[${deleteMessage}]]
+                </div>
+            </div>
+
+            <div>
+                <th:block th:if="${#lists.isEmpty(listChecklists)}">
+                    <h5 class="text-center my-5">Not found</h5>
+                </th:block>
+                <th:block th:unless="${#lists.isEmpty(listChecklists)}">
+                    <table class="table table-hover table-bordered mt-2 text-center">
+                        <thead>
+                            <tr class="bg-secondary text-white">
+                                <th scope="col">Checklist Id</th>
+                                <th scope="col">Checklist Name</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Created By</th>
+                                <th scope="col">Created At</th>
+                                <th scope="col" class="col-2">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="checklist : ${listChecklists}">
+                                <td class="text-center" th:text="${checklist.id}" />
+                                <td class="text-center" th:text="${checklist.name}" />
+                                <td class="text-center" th:text="${checklist.description}" />
+                                <td class="text-center" th:text="${checklist.createdBy}" />
+                                <td class="text-center" th:text="${checklist.createdAt}" />
+                                <td>
+                                    <span class="d-flex justify-content-center">
+                                        <a th:href="@{'/checklist/edit/' + ${checklist.id}}">
+                                            <i class="btn btn-outline-secondary text-primary fas fa-edit"></i>
+                                        </a>
+                                        <a th:href="@{'/assignment/assign/' + ${checklist.id}}">
+                                            <i class="btn btn-outline-secondary text-primary fas fa-hands-helping mx-1"></i>
+                                        </a>
+                                        <a th:href="@{/assignment/pageAdmin}">
+                                            <i class="btn btn-outline-secondary text-primary fas fa-search-location mr-1"></i>
+                                        </a>
+                                        <a th:data-id="${checklist.id}"
+                                           th:data-name="${checklist.name}"
+                                           onclick="showConfirmModalDialogChecklist(this.getAttribute('data-id'),this.getAttribute('data-name'))">
+                                            <i class="btn btn-outline-warning fas fa-trash-alt text-danger"></i>
+                                        </a>
+                                    </span>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </th:block>
+            </div>
+
+            <div class="modal fade" id="checklistId" tabindex="-1" role="dialog" aria-labelledby="modalTitle">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirmation</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Do you want to delete "<span id="checklistName"></span>"?
+                        </div>
+                        <div class="modal-footer">
+                            <a id="yesOptionChecklist" type="button" class="btn btn-danger">Yes</a>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mb-5 pb-5">
+                <div class="h5">Total Items: <b class="text-primary">[[${totalItems}]]</b> - Page [[${currentPage}]] of [[${totalPages}]]</div>
+                <div th:if="${totalPages >1}" class="mt-2">
+                    <nav>
+                        <ul class="pagination justify-content-center flex-wrap">
+                            <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+                                <a class="page-link" th:href="@{/checklist/page/1}">First</a>
+                            </li>
+                            <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+                                <a class="page-link" th:href="@{'/checklist/page/' + ${currentPage - 1}}">Previous</a>
+                            </li>
+                            <th:block th:if="${totalPages <= 10}">
+                                <li th:each="i : ${#numbers.sequence(1,totalPages)}" th:class="${i != currentPage ? 'page-item' : 'page-item disabled'}">
+                                    <a class="page-link" th:href="@{'/checklist/page/'+${i}}">[[${i}]]</a>
+                                </li>
+                            </th:block>
+
+                            <th:block th:if="${totalPages > 10}">
+                                <th:block th:if="${currentPage <=5 || currentPage >= totalPages - 4}">
+                                    <li th:each="i : ${#numbers.sequence(1,5)}" th:class="${i != currentPage ? 'page-item' : 'page-item disabled'}">
+                                        <a class="page-link" th:href="@{'/checklist/page/'+${i}}" >[[${i}]]</a>
+                                    </li>
+                                    <a class="page-link" th:href="@{/checklist/page/6}">...</a>
+                                    <li th:each="i : ${#numbers.sequence(totalPages - 4,totalPages)}" th:class="${i != currentPage ? 'page-item' : 'page-item disabled'}">
+                                        <a class="page-link" th:href="@{'/checklist/page/'+${i}}">[[${i}]]</a>
+                                    </li>
+                                </th:block>
+                                <th:block th:if="${currentPage > 5 && currentPage < totalPages - 4}">
+                                    <a class="page-link" th:href="@{'/checklist/page/' + ${currentPage - 4}}">...</a>
+                                    <li th:each="i : ${#numbers.sequence(currentPage - 1,currentPage + 1)}" th:class="${i != currentPage ? 'page-item' : 'page-item disabled'}">
+                                        <a class="page-link" th:href="@{'/checklist/page/'+${i}}">[[${i}]]</a>
+                                    </li>
+                                    <a class="page-link" th:href="@{'/checklist/page/' + ${currentPage +2}}">...</a>
+                                </th:block>
+                            </th:block>
+
+                            <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+                                <a class="page-link" th:href="@{'/checklist/page/' + ${currentPage + 1}}">Next</a>
+                            </li>
+                            <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+                                <a class="page-link" th:href="@{'/checklist/page/' + ${totalPages}}">Last</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="home-footer" th:replace="~{/fragments/app-fragments :: copyright}">
+    </div>
+
+    <th:block id="home-static-resources">
+        <script type="text/javascript" th:src="@{/js/checklist_list.js}"></script>
+    </th:block>
+
+</body>
+</html>

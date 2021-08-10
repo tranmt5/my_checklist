@@ -1,0 +1,147 @@
+body {
+    min-width: 1200px;
+}
+
+#home-main-content {
+    min-height: 800px;
+}
+
+:root{
+    --bg_color:#563d7c;
+    --blue_color: #17a2b8;
+    --red_color: red;
+    --white_color:#fff;
+    --black_color: black;
+
+}
+
+
+.bg_color{
+    background-color: var(--bg_color);
+}
+
+
+.bg_blue{
+    background-color: var(--blue_color);
+}
+
+
+.bg_red{
+    background-color: var(--red_color);
+}
+
+
+.text_white{
+    color:var(--white_color);
+}
+
+
+.text_black{
+    color:var(--black_color);
+}
+
+
+.text_red{
+    color: var(--red_color);
+}
+
+
+header ul li a{
+    opacity:0.7;
+}
+
+
+header ul li a:hover{
+    border-radius: 5px;
+    box-shadow: 0 0 5px #11ffff,
+                0 0 5px #99ffff;
+    opacity: 1;
+}
+
+
+header a{
+    opacity:0.7;
+}
+
+
+header a:hover {
+    opacity: 1;
+}
+
+
+
+/* css navigator level 2 */
+header ul {
+    position:relative;
+}
+
+header ul ul{
+    position: absolute;
+    top: 70px;
+    width:180px;
+    list-style: none;
+    z-index: 1;
+    border: 1px solid;
+    border-radius: 5px;
+    box-shadow: 5px 5px #888888;
+    visibility: hidden;
+    opacity: 0;
+    transition: top 0.5s;
+}
+
+
+header ul .pseudo::after{
+    content: "";
+    display: block;
+    width: 100px;
+    height:10px;
+    background-color:rgba(0, 0,0, 0);
+}
+
+
+header ul li:hover > ul{
+    top: 50px;
+    visibility: visible;
+    opacity: 1;
+}
+
+.hover_form :hover{
+   opacity: 0.8;
+   cursor: pointer;
+}
+
+header ul ul li{
+    position: relative;
+    right: 30px;
+    width:200px;
+    padding: 8px 30px 8px 0px;
+}
+
+header ul ul li a{
+    padding:6px 10px;
+}
+
+.asterisk::after {
+    content:"*";
+    color:red;
+}
+
+.text_shadow {
+       text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
+}
+
+.box_shadow {
+    box-shadow: 10px 10px 5px grey;
+}
+
+.hover_scale :hover {
+    transform: scale(1.2);
+
+}
+
+.pointer :hover {
+    cursor: pointer;
+}
+
+
+

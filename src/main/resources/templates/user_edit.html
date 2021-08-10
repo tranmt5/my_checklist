@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #home-static-resources},
+                                                ~{:: #home-header},
+                                                ~{:: #home-nav},
+                                                ~{:: #home-main-content},
+                                                ~{:: #home-footer}
+                                               )}">
+
+<head>
+    <title>User Edit</title>
+    <th:block id="home-static-resources">
+        <link rel="stylesheet" th:href="@{/dist/css/jquery-ui.css}">
+        <link rel="stylesheet" th:href="@{/dist/css/jquery.tag-editor.css}">
+        <script type="text/javascript" th:src="@{/dist/js/jquery-ui.js}"></script>
+        <script type="text/javascript" th:src="@{/dist/js/jquery.caret.min.js}"></script>
+<!--        <script type="text/javascript" th:src="@{/dist/js/jquery.tag-editor.js}"></script>-->
+        <script type="text/javascript" th:src="@{/dist/js/jquery.tag-editor.min.js}"></script>
+        <script type="text/javascript" th:src="@{/js/user_edit.js}"></script>
+
+    </th:block>
+</head>
+
+<body>
+    <div id="home-nav" th:replace="~{/fragments/app-fragments :: nav-default}">
+    </div>
+
+    <div id="home-main-content" class="pb-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb pl-4">
+                <li class="breadcrumb-item pl-1"><a href="#">Setting</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Edit user</li>
+            </ol>
+        </nav>
+
+        <section>
+            <form th:action="@{/setting/user/saveEdit}" th:object="${user}" method="POST" enctype="multipart/form-data">
+                <div class="d-flex flex-row">
+                    <div class="col-6">
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label">Id:</label>
+                            <input class="col-7 form-control" type="text" th:field="*{id}" readonly="readonly" />
+                        </div>
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label">Username:</label>
+                            <input class="col-7 form-control" type="text" th:field="*{username}" readonly="readonly" />
+                        </div>
+
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label asterisk">Password:</label>
+                            <input class="col-7 form-control" type="password" th:field="*{password}" placeholder="Password" autofocus required minlength="6" maxlength="20"/>
+                        </div>
+
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label">Email:</label>
+                            <input class="col-7 form-control" type="email" th:field="*{email}" placeholder="Your email" />
+                        </div>
+
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label">Phone number:</label>
+                            <input class="col-7 form-control"  type="text" th:field="*{phoneNumber}" placeholder="Phone number" minlength="10" maxlength="20"/>
+                        </div>
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label">Role:</label>
+                            <div class="col-7 form-control d-flex flex-row">
+                                <p th:each="role: ${user.roles}">
+                                    <span th:text="${role.name}"></span> &ensp;
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label">Role Id:</label>
+                            <div class="col-7 form-control">
+                                <input type="text" id="role_input" th:field="*{roles}"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="form-group row justify-content-center d-none">
+                            <label class="col-3 col-form-label">Id:</label>
+                            <input class="col-7 form-control" type="text" th:value="${user.id}" name="userInfo.id"/>
+                        </div>
+
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label">Firstname:</label>
+                            <input class="col-7 form-control" type="text"  th:field="*{userInfo.firstName}" placeholder="Firstname"/>
+                        </div>
+
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label">Lastname:</label>
+                            <input class="col-7 form-control" type="text" th:field="*{userInfo.lastName}" placeholder="Lastname"/>
+                        </div>
+
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label">Gender:</label>
+                            <input class="col-7 form-control" type="text" th:field="*{userInfo.gender}" placeholder="Male/Female"/>
+                        </div>
+
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label">Date of Birth:</label>
+                            <input class="col-7 form-control" type="text" th:field="*{userInfo.dateOfBirth}" placeholder="DD/MM/YYYY"/>
+                        </div>
+
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label">Address:</label>
+                            <input class="col-7 form-control" type="text" th:field="*{userInfo.address}" placeholder="Address"/>
+                        </div>
+
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label">Enabled:</label>
+                            <select class="col-7 form-control" th:field="*{enabled}" >
+                                <option th:text="Enabled" th:value="1"></option>
+                                <option th:text="Disabled" th:value="0"></option>
+                            </select>
+                        </div>
+
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label">Avatar:</label>
+                            <div class="col-7 form-control clearfix">
+                                <input type="file" name="fileImage" id="fileImage" accept="image/png, image/jpeg"/>
+<!--                                <img id="avatar" alt="Avatar Preview" th:src="@{${user.getAvatarPath()}}" class="mt-2" style="width:200px" />-->
+                                <img th:src="${user.base64Img}" style="max-height: 110px">
+                                <span class="float-left mt-1" th:text="${user.nameAvatar}"></span>
+                                <input class="d-none" type="text" th:field="*{avatar}" readonly="readonly"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mb-5">
+                    <a class="btn btn-danger mx-2 mt-3 mb-5" th:href="@{/setting/user/}">Cancel</a>
+                    <button class="btn btn-success  mx-2 mt-3 mb-5 px-4" type="submit">Save</button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <div id="home-footer" th:replace="~{/fragments/app-fragments :: copyright}">
+    </div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #home-static-resources},
+                                                ~{:: #home-header},
+                                                ~{:: #home-nav},
+                                                ~{:: #home-main-content},
+                                                ~{:: #home-footer}
+                                               )}">
+
+<head>
+    <title>User list</title>
+</head>
+
+<body>
+    <div id="home-nav" th:replace="~{/fragments/app-fragments :: nav-default}">
+    </div>
+
+    <div id="home-main-content">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb pl-4 ">
+                <li class="breadcrumb-item pl-1"><a href="#">Setting</a></li>
+                <li class="breadcrumb-item active" aria-current="page">List user</li>
+            </ol>
+        </nav>
+
+        <section>
+            <form  th:action="@{/setting/user/}" method="GET">
+                <div class="d-flex flex-row my-3">
+                    <div class="col col-9 row">
+                        <label class="col col-2 mx-2 h5 mt-1">Username:</label>
+                        <input type="text" class="form-control col col-4 font-weight-bold" name="keyword" required="required" placeholder="Search...">
+                        <div class="text-center col col-1"><button class="btn btn-success px-4" type="submit"><i class="fas fa-search"></i></button>
+                        </div>
+                        <div class="text-center col col-1 float-right"><a class="btn btn-success" th:href="@{/setting/user/}" ><i class="fas fa-undo-alt"></i></a></div>
+                    </div>
+
+                    <div class="col mr-2">
+                        <a class="btn btn-success float-right" th:href="@{/setting/user/add}">Add user</a>
+                    </div>
+                </div>
+            </form>
+
+            <div>
+                <div th:if="${editMessage != null}" class=" alert alert-success text-center">
+                    [[${editMessage}]]
+                </div>
+                <div th:if="${deleteMessage != null}" class=" alert alert-success text-center">
+                    [[${deleteMessage}]]
+                </div>
+            </div>
+
+            <div>
+                <th:block th:if="${#lists.isEmpty(listUsers)}">
+                    <h5 class="text-center my-5">Not found</h5>
+                </th:block>
+                <th:block th:unless="${#lists.isEmpty(listUsers)}">
+                    <table class="table table-hover table-bordered mt-2 text-center">
+                        <thead>
+                            <tr class="bg-secondary text-white">
+                                <th class="text-center" scope="col">Id</th>
+                                <th class="text-center" scope="col">Username</th>
+                                <th class="text-center" scope="col">Role</th>
+                                <th class="text-center" scope="col">Firstname</th>
+                                <th class="text-center" scope="col">Lastname</th>
+                                <th class="text-center" scope="col">Date of Birth</th>
+                                <th class="text-center" scope="col">Email</th>
+                                <th class="text-center" scope="col">Phone Number</th>
+                                <th class="text-center" scope="col">Address</th>
+                                <th class="text-center" scope="col">Enabled</th>
+                                <th class="text-center col-1" scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="user : ${listUsers}">
+                                <td class="text-center" th:text="${user.id}" />
+                                <td class="text-center" th:text="${user.username}" />
+                                <td class="text-center">
+                                    <p th:each="role : ${user.roles}">
+                                        <span th:text="${role.name}"></span>
+                                    </p>
+                                </td>
+                                <td class="text-center">
+                                    <p th:each="userInfo : ${user.userInfo}">
+                                        <span th:text="${userInfo.firstName}"></span>
+                                    </p>
+                                </td>
+                                <td class="text-center">
+                                    <p th:each="userInfo : ${user.userInfo}">
+                                        <span th:text="${userInfo.lastName}"></span>
+                                    </p>
+                                </td>
+                                <td class="text-center">
+                                    <p th:each="userInfo : ${user.userInfo}">
+                                        <span th:text="${userInfo.dateOfBirth}"></span>
+                                    </p>
+                                </td>
+                                <td class="text-center" th:text="${user.email}" />
+                                <td class="text-center" th:text="${user.phoneNumber}" />
+                                <td class="text-center">
+                                    <p th:each="userInfo : ${user.userInfo}">
+                                        <span th:text="${userInfo.address}"></span>
+                                    </p>
+                                </td>
+                                <td class="text-center" th:text="${user.enabled}" />
+                                <td>
+                                    <span class="d-flex justify-content-center">
+                                        <a th:href="@{'/setting/user/edit/' + ${user.id}}" >
+                                            <i class="btn btn-outline-secondary text-primary fas fa-edit mr-2"></i>
+                                        </a>
+                                        <a th:data-id="${user.id}"
+                                            th:data-name="${user.username}"
+                                            onclick="showConfirmModalDialogUser(this.getAttribute('data-id'),this.getAttribute('data-name'))">
+                                            <i class="btn btn-outline-warning fas fa-trash-alt text-danger"></i>
+                                        </a>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </th:block>
+            </div>
+
+            <div class="modal fade" id="userId" tabindex="-1" role="dialog" aria-labelledby="modalTitle">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirmation</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Do you want to delete "<span id="username"></span>"?
+                        </div>
+                        <div class="modal-footer">
+                            <a id="yesOptionUser" type="button" class="btn btn-danger">Yes</a>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mb-5 pb-5">
+                <div class="h5">Total Items: <b class="text-primary">[[${totalItems}]]</b> - Page [[${currentPage}]] of [[${totalPages}]]</div>
+                <div th:if="${totalPages >1}" class="mt-2">
+                    <nav>
+                        <ul class="pagination justify-content-center flex-wrap">
+                            <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+                                <a class="page-link" th:href="@{/setting/user/page/1}">First</a>
+                            </li>
+                            <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+                                <a class="page-link" th:href="@{'/setting/user/page/' + ${currentPage - 1}}">Previous</a>
+                            </li>
+                            <th:block th:if="${totalPages <= 10}">
+                                <li th:each="i : ${#numbers.sequence(1,totalPages)}" th:class="${i != currentPage ? 'page-item' : 'page-item disabled'}">
+                                    <a class="page-link" th:href="@{'/setting/user/page/'+${i}}">[[${i}]]</a>
+                                </li>
+                            </th:block>
+
+                            <th:block th:if="${totalPages > 10}">
+                                <th:block th:if="${currentPage <= 5 || currentPage >= totalPages - 4}">
+                                    <li th:each="i : ${#numbers.sequence(1,5)}" th:class="${i != currentPage ? 'page-item' : 'page-item disabled'}">
+                                        <a class="page-link" th:href="@{'/setting/user/page/'+${i}}" >[[${i}]]</a>
+                                    </li>
+                                    <a class="page-link" th:href="@{/setting/user/page/6}">...</a>
+                                    <li th:each="i : ${#numbers.sequence(totalPages - 4,totalPages)}" th:class="${i != currentPage ? 'page-item' : 'page-item disabled'}">
+                                        <a class="page-link" th:href="@{'/setting/user/page/'+${i}}">[[${i}]]</a>
+                                    </li>
+                                </th:block>
+                                <th:block th:if="${currentPage > 5 && currentPage < totalPages - 4}">
+                                    <a class="page-link" th:href="@{'/setting/user/page/' + ${currentPage - 5}}">...</a>
+                                    <li th:each="i : ${#numbers.sequence(currentPage - 4,currentPage + 4)}" th:class="${i != currentPage ? 'page-item' : 'page-item disabled'}">
+                                        <a class="page-link" th:href="@{'/setting/user/page/'+${i}}">[[${i}]]</a>
+                                    </li>
+                                    <a class="page-link" th:href="@{'/setting/user/page/' + ${currentPage + 5}}">...</a>
+                                </th:block>
+                            </th:block>
+
+                            <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+                                <a class="page-link" th:href="@{'/setting/user/page/' + ${currentPage + 1}}">Next</a>
+                            </li>
+                            <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+                                <a class="page-link" th:href="@{'/setting/user/page/' + ${totalPages}}">Last</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="home-footer" th:replace="~{/fragments/app-fragments :: copyright}">
+    </div>
+
+    <th:block id="home-static-resources">
+        <script type="text/javascript" th:src="@{/js/user_list.js}"></script>
+    </th:block>
+
+</body>
+</html>

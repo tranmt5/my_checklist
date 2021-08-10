@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #home-static-resources},
+                                                ~{:: #home-header},
+                                                ~{:: #home-nav},
+                                                ~{:: #home-main-content},
+                                                ~{:: #home-footer}
+                                               )}">
+
+<head>
+    <title>Checklist Assign</title>
+</head>
+
+<body>
+    <div id="home-nav" th:replace="~{/fragments/app-fragments :: nav-default}">
+    </div>
+
+    <div id="home-main-content">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb pl-4 ">
+                <li class="breadcrumb-item pl-1"><a href="#">Checklist</a></li>
+                <li class="breadcrumb-item active" aria-current="page">List checklist</li>
+            </ol>
+        </nav>
+
+
+        <section>
+            <div class="my-3 ml-1 pl-4 h4"><strong>List of checklists</strong></div>
+
+            <form class="mb-3" th:action="@{/checklist/}">
+                <div class="col col-9 row">
+                    <label class="col col-3 h5 mt-2 ml-2">Checklist name:</label>
+                    <input type="text" class="form-control col col-4 font-weight-bold" name="keyword" required="required">
+                    <div class="text-center col col-1"><button class="btn btn-success px-4" type="submit"><i class="fas fa-search"></i></button>
+                    </div>
+                    <div class="text-center col col-2 ml-2 float-right"><a class="btn btn-success " th:href="@{/checklist/}"><i class="fas fa-home"></i></a></div>
+                </div>
+            </form>
+
+            <div>
+                <table class="table table-hover table-bordered mt-2 text-center">
+                    <thead>
+                    <tr class="bg-secondary text-white">
+                        <th scope="col">Checklist Id</th>
+                        <th scope="col">Checklist Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Created By</th>
+                        <th scope="col">Created At</th>
+                        <th scope="col">Updated By</th>
+                        <th scope="col">Update At</th>
+                        <th scope="col" class="col-1">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="checklist : ${listChecklists}">
+                        <td class="text-center" th:text="${checklist.id}" />
+                        <td class="text-center" th:text="${checklist.name}" />
+                        <td class="text-center" th:text="${checklist.description}" />
+                        <td class="text-center" th:text="${checklist.createdBy}" />
+                        <td class="text-center" th:text="${checklist.createdAt}" />
+                        <td class="text-center" th:text="${checklist.modifiedBy}" />
+                        <td class="text-center" th:text="${checklist.modifiedAt}" />
+                        <td class="text-center">
+                            <a th:href="@{'/checklist/edit/' + ${checklist.id}}"><i class="fas fa-edit mr-2"></i></a>
+                            <a th:href="@{'/assignment/' + ${checklist.id}}"><i class="fas fa-hands-helping"></i></a>
+                            <a th:href="@{/assignment/}"><i class="fas fa-search-location mr-3"></i></a>
+                            <a th:href="@{'/checklist/delete/' + ${checklist.id}}"><i class="fas fa-trash-alt"></i></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="position-absolute container" style="background-color: rgba(255,255,255,.5); top: 0px; width: 100%; height: 100%;">
+            <div  class="position-absolute w-100 h-120 row justify-content-center" style="top: 100px">
+
+                <form  th:action="@{/assignment/save}" method="POST" th:object="${assignment}" class="col-6 h-50 bg-secondary text-white">
+
+                    <div class="col-12 text-right pt-1 ml-4">
+                        <a th:href="@{/checklist/}" class="btn btn-danger">Close</a>
+                    </div>
+
+                    <div class="form-group row justify-content-center pt-3">
+                        <label class="col-3 col-form-label text-left">Checklist Id:</label>
+                        <input class="form-control col-7 font-weight-bold" type="text" th:value="${checklist.id}" name="checklist" readonly="readonly" />
+                    </div>
+
+                    <div class="form-group row justify-content-center pt-3">
+                        <label class="col-3 col-form-label text-left">Assign to:</label>
+                        <select class="form-control col-7 font-weight-bold" th:field="*{user}" required multiple style="resize: vertical; height:100px">
+                            <th:block th:each="user : ${listUser}">
+                                <option th:text="${user.username}" th:value="${user.id}" />
+                            </th:block>
+                        </select>
+                    </div>
+
+                    <div class="form-group row justify-content-center pt-3">
+                        <label class="col-3 col-form-label text-left">Comment:</label>
+                        <input class="form-control col-7 font-weight-bold" type="text" th:field="*{comment}" />
+                    </div>
+
+                    <div class="text-center my-2"><button class="btn btn-success px-4" type="submit">OK</button></div>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="home-footer" th:replace="~{/fragments/app-fragments :: copyright}">
+    </div>
+
+</body>
+</html>

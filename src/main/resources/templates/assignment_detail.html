@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #home-static-resources},
+                                                ~{:: #home-header},
+                                                ~{:: #home-nav},
+                                                ~{:: #home-main-content},
+                                                ~{:: #home-footer}
+                                               )}">
+
+<head>
+    <title>Assignment Detail</title>
+</head>
+
+<body>
+    <div id="home-nav" th:replace="~{/fragments/app-fragments :: nav-default}">
+    </div>
+
+    <div id="home-main-content" class="pb-5 mb-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb pl-4 ">
+                <li class="breadcrumb-item pl-1"><a href="#">Assignment</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Detail Page</li>
+            </ol>
+        </nav>
+
+        <section>
+            <div>
+                <div th:if="${changeStatusAssignment != null}" class=" alert alert-success text-center">
+                    [[${changeStatusAssignment}]]
+                </div>
+            </div>
+
+            <form th:action="@{/assignment/detail/save}" th:object="${assignment}" method="POST">
+                <div class="d-flex flex-row border border-primary border-4 shadow-lg p-3 mb-5 bg-body rounded box_shadow">
+                    <div class="col-6">
+                        <div class="d-none form-group row justify-content-center">
+                            <label class="col-3 col-form-label">User:</label>
+                            <input class="col-7 form-control" type="text" th:field="*{user}" readonly="readonly" />
+                        </div>
+                        <div class="d-none form-group row justify-content-center">
+                            <label class="col-3 col-form-label">Checklist:</label>
+                            <input class="col-7 form-control" type="text" th:field="*{checklist}" readonly="readonly" />
+                        </div>
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label">Assignment Id:</label>
+                            <input class="col-7 form-control" type="text" th:field="*{id}" readonly="readonly" />
+                        </div>
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label">Assignee:</label>
+                            <input class="col-7 form-control" type="text" th:field="*{user.username}" readonly="readonly" />
+                        </div>
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label ">Status:</label>
+                            <select class="col-7 form-control" type="text" th:field="*{status}">
+                                <option th:text="New" th:value="0"></option>
+                                <option th:text="In-progress" th:value="1"></option>
+                                <option th:text="Completed" th:value="2"></option>
+                                <option th:text="Cancelled" th:value="3"></option>
+                                <option th:text="Closed" th:value="4"></option>
+                            </select>
+                        </div>
+                        <div id ="cancelComment" class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label asterisk">Reason:</label>
+                            <textarea class="col-7 form-control" rows="2" cols="50" autofocus th:placeholder="Reason" th:field="*{reason}" required="required">
+                            </textarea>
+                        </div>
+                        <div class="form-group row">
+                            <a class="btn btn-danger" th:href="@{/assignment/}">Cancel</a>
+                            <button class="btn btn-success mx-2" type="submit">Change Status</button>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label ">Comment:</label>
+                            <input class="col-7 form-control" type="text" th:field="*{comment}" readonly="readonly" />
+                        </div>
+                        <div class="d-none form-group row justify-content-center">
+                            <label class="col-3 col-form-label ">Assigned By:</label>
+                            <input class="col-7 form-control" type="text" th:field="*{assignedBy}" readonly="readonly" />
+                        </div>
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label ">Assigned By:</label>
+                            <input class="col-7 form-control" type="text" th:field="*{assignedBy.username}" readonly="readonly" />
+                        </div>
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label ">Assigned At:</label>
+                            <input class="col-7 form-control" type="text" th:field="*{assignedAt}" readonly="readonly" />
+                        </div>
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3 col-form-label ">Progress:</label>
+                            <input id="test" class="d-none" type="text" th:field="*{progress}" />
+                            <div id="progressbar" class="col-7 form-control" style="position:relative">
+                                <b style="position:absolute; left:10%; top:10%" th:text="${ratio}"></b>
+                                <span id="progressbar-label" style="position:absolute; left:80%; top:10%" th:text="${assignment.progress} + ' %'"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-row border border-primary border-4 rounded align-items-center box_shadow">
+                    <div class="text-center h5 col-2">
+                        <b data-toggle="tooltip" data-placement="top" title="Checklist name" th:text="${assignment.checklist.name}"></b>
+                    </div>
+                    <div class="col-10">
+                        <table class="table table-hover table-bordered my-2">
+                            <thead>
+                            <tr class="text-center">
+                                <th class="col-1">No</th>
+                                <th>ChecklistItems</th>
+                                <th class="col-1">Complete</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="pointer" th:each= "assign,iState : ${assignmentDetails}" th:assignmentId = "${assignment.Id}"  th:assignmentDetailsId ="${assign.Id}">
+                                <td class="text-center" th:utext="${iState.count}">No</td>
+                                <td  th:text="${assign.checklistItem.nameItem}"></td>
+                                <td th:switch="${assign.status}" class="d-flex justify-content-center" >
+                                    <i th:case= "0" class="fa-2x fas fa-toggle-off" style="color:grey"></i>
+                                    <i th:case= "1" class="fa-2x fas fa-toggle-on" style="color:green" ></i>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="clearfix">
+                            <i class="float-right mb-2 font-weight-bold">* Drag and drop to change the order of items *</i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <div id="home-footer" th:replace="~{/fragments/app-fragments :: copyright}">
+    </div>
+
+    <th:block id="home-static-resources">
+        <link rel="stylesheet" th:href="@{/dist/css/jquery-ui.css}">
+        <script type="text/javascript" th:src="@{/dist/js/jquery-ui.js}"></script>
+        <script type="text/javascript" th:src="@{/js/assignment_detail.js}"></script>
+    </th:block>
+
+</body>
+</html>

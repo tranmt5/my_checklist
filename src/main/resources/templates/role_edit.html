@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #home-static-resources},
+                                                ~{:: #home-header},
+                                                ~{:: #home-nav},
+                                                ~{:: #home-main-content},
+                                                ~{:: #home-footer}
+                                               )}">
+
+<head>
+    <title>Edit Role</title>
+</head>
+
+<body>
+    <div id="home-nav" th:replace="~{/fragments/app-fragments :: nav-default}">
+    </div>
+
+    <div id="home-main-content">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb pl-4 ">
+                <li class="breadcrumb-item pl-1"><a href="#">Setting</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Edit role</li>
+            </ol>
+        </nav>
+
+
+        <section>
+            <form th:action="@{/setting/role/saveEdit}" th:object="${role}" method="POST">
+                <div class="form-group row justify-content-center">
+                    <label class="col-2 col-form-label asterisk">Role Id:</label>
+                    <input class="col-3 form-control" type="text" th:field="*{id}" readonly="readonly"/>
+                </div>
+
+                <div class="form-group row justify-content-center">
+                    <label class="col-2 col-form-label asterisk">Role name:</label>
+                    <input class="col-3 form-control" type="text" th:field="*{name}" required/>
+                </div>
+
+                <div class="form-group row justify-content-center">
+                    <label class="col-2 col-form-label">Description:</label>
+                    <input class="col-3 form-control" type="text" th:field="*{description}"/>
+                </div>
+
+                <div class="text-center">
+                    <a class="btn btn-danger mx-2 my-3" th:href="@{/setting/role/}">Cancel</a>
+                    <button class="btn btn-success mx-2 my-3 px-4" type="submit">Save</button>
+                </div>
+
+            </form>
+
+        </section>
+    </div>
+
+    <div id="home-footer" th:replace="~{/fragments/app-fragments :: copyright}">
+    </div>
+
+</body>
+</html>

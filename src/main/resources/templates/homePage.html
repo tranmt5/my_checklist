@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #home-static-resources},
+                                                ~{:: #home-header},
+                                                ~{:: #home-nav},
+                                                ~{:: #home-main-content},
+                                                ~{:: #home-footer}
+                                               )}">
+
+<head>
+    <title>Home Page</title>
+    <th:block id="home-static-resources">
+        <link rel="stylesheet" th:href="@{/css/homePage.css}">
+    </th:block>
+</head>
+
+<body>
+    <div id="home-nav" th:replace="~{/fragments/app-fragments :: nav-home}">
+    </div>
+
+    <div id="home-main-content">
+        <div class="py-5 my-5 my_hover d-flex justify-content-around"  >
+            <a class="text-white h4 text-center none_underline" th:href="@{/checklist/}"><div class="circle">Checklist</div></a>
+            <a class="text-white h4 text-center none_underline" th:href="@{/assignment/pageAdmin}"><div class="circle">Assignment</div></a>
+            <a class="text-white h4 text-center none_underline" th:href="@{/assignment/}"><div class="circle">My Assignment</div></a>
+            <a class="text-white h4 text-center none_underline" th:href="@{/setting/user/}"><div class="circle">Setting</div></a>
+        </div>
+    </div>
+
+    <div id="home-footer" th:replace="~{/fragments/app-fragments :: copyright}">
+    </div>
+</body>
+</html>

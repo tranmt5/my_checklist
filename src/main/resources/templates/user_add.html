@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #home-static-resources},
+                                                ~{:: #home-header},
+                                                ~{:: #home-nav},
+                                                ~{:: #home-main-content},
+                                                ~{:: #home-footer}
+                                               )}">
+
+<head>
+    <title>User Add</title>
+</head>
+
+<body>
+    <div id="home-nav" th:replace="~{/fragments/app-fragments :: nav-default}">
+    </div>
+
+    <div id="home-main-content" >
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb pl-4">
+                <li class="breadcrumb-item pl-1"><a href="#">Setting</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Add user</li>
+            </ol>
+        </nav>
+
+        <section>
+            <div>
+                <div th:if="${addUserMessage != null}" class=" alert alert-success text-center">
+                    [[${addUserMessage}]]
+                </div>
+            </div>
+            <form th:action="@{/setting/user/save}" th:object="${user}" method="POST">
+
+                <div class="text-danger form-group row justify-content-center" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                <div class="text-danger form-group row justify-content-center" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"></div>
+
+                <div class="form-group row justify-content-center">
+                    <label class="col-2 col-form-label asterisk">Username:</label>
+                    <input class="col-4 form-control" type="text" th:field="*{username}" placeholder="Username" autofocus required minlength="2" maxlength="64"/>
+                </div>
+
+                <div class="form-group row justify-content-center">
+                    <label class="col-2 col-form-label asterisk">Password:</label>
+                    <input class="col-4 form-control" type="password" th:field="*{password}" placeholder="Password" required minlength="6" maxlength="64"/>
+                </div>
+
+                <div class="form-group row justify-content-center">
+                    <label class="col-2 col-form-label asterisk">Re-password:</label>
+                    <input class="col-4 form-control" type="password" th:field="*{passwordConfirm}" placeholder="Confirm password" required minlength="6" maxlength="64" />
+                </div>
+
+                <div class="form-group row justify-content-center">
+                    <label class="col-2 col-form-label">Email:</label>
+                    <input class="col-4 form-control" type="email" th:field="*{email}" placeholder="Your email" />
+                </div>
+
+                <div class="form-group row justify-content-center">
+                    <label class="col-2 col-form-label">Phone number:</label>
+                    <input class="col-4 form-control" type="text" th:field="*{phoneNumber}" placeholder="Phone number" minlength="10" maxlength="20" />
+                </div>
+
+                <div class="text-center">
+                    <a class="btn btn-danger my-3 mx-2" th:href="@{/setting/user/}">Cancel</a>
+                    <button type="submit" class="btn btn-success mx-2 my-3 px-4">Save</button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <div id="home-footer" th:replace="~{/fragments/app-fragments :: copyright}">
+    </div>
+
+</body>
+</html>

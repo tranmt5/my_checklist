@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #home-static-resources},
+                                                ~{:: #home-header},
+                                                ~{:: #home-nav},
+                                                ~{:: #home-main-content},
+                                                ~{:: #home-footer}
+                                               )}">
+
+    <head>
+        <title>The page not found</title>
+    </head>
+
+    <body>
+        <div id="home-nav" th:replace="~{/fragments/app-fragments :: nav-admin}">
+        </div>
+
+        <div id="home-main-content" class="mt-5 text-center">
+            <h2>Sorry! The page you have requested could not be found :(</h2>
+        </div>
+
+        <div id="home-footer" th:replace="~{/fragments/app-fragments :: copyright}">
+        </div>
+
+    </body>
+</html>
+

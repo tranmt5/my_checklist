@@ -1,0 +1,15 @@
+table {
+    counter-reset: rowNumber;
+}
+
+table tr {
+    counter-increment: rowNumber;
+}
+
+table tr td:first-child::before {
+    content: counter(rowNumber)".";
+    position: relative;
+    top: 12px;
+    padding-left: 50px;
+
+}

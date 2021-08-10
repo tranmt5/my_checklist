@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #home-static-resources},
+                                                ~{:: #home-header},
+                                                ~{:: #home-nav},
+                                                ~{:: #home-main-content},
+                                                ~{:: #home-footer}
+                                               )}">
+
+<head>
+    <title>Checklist Edit</title>
+</head>
+
+<body>
+    <div id="home-nav" th:replace="~{/fragments/app-fragments :: nav-default}">
+    </div>
+    <div id="home-main-content">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb pl-4 ">
+                <li class="breadcrumb-item pl-1"><a href="#">Checklist</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Edit checklist</li>
+            </ol>
+        </nav>
+
+        <section>
+            <div th:if="${deleteItemMessage != null}" class=" alert alert-success text-center">
+                [[${deleteItemMessage}]]
+            </div>
+
+            <form th:action="@{/checklist/saveEdit}" th:object="${checklist}" method="POST">
+
+                <div class="row my-3">
+                    <input type="hidden" th:field="*{createdBy}" readonly="readonly" />
+                    <input type="hidden" th:field="*{createdAt}" readonly="readonly" />
+
+                    <div class="col col-4 row">
+                        <label class="col col-5 h5 ml-4 mt-2">Checklist Id:</label>
+                        <input class="form-control col col-3 font-weight-bold" th:field="*{id}" readonly="readonly" />
+                    </div>
+                    <div class="col mr-4">
+                        <button class="btn btn-success float-right" type="reset">Reset</button>
+                    </div>
+                </div>
+                <div class="row my-3">
+                    <div class="col col-5 row">
+                        <label class="col col-5 h5 ml-4 mt-1">Checklist Name:</label>
+                        <input type="text" class="form-control col col-6 font-weight-bold" th:field="*{name}" required />
+                    </div>
+                    <div class="col col-6 row">
+                        <label class="col col-5 h5 text-right mt-1 mx-2">Description:</label>
+                        <input type="text" class="form-control col col-6 font-weight-bold" th:field="*{description}" required />
+                    </div>
+
+                </div>
+                <table id="content" style="width: 100%;" class="mt-4 mb-4">
+                    <tr th:each="checklistItem,iState  : ${checklistItems}">
+                        <input type="hidden" th:value="${checklistItem.id}" th:name="|checklistItems[${iState.index}].id|" readonly="readonly" />
+                        <td class="text-right" th:utext="${iState.count} + '.'">No</td>
+                        <td><input class="form-control my-2 float-right font-weight-bold" type="text" th:value="${checklistItem.nameItem}" th:name="|checklistItems[${iState.index}].nameItem|"></td>
+                        <td><a th:data-id="${checklistItem.id}"
+                               th:data-name="${checklistItem.nameItem}"
+                               onclick="showConfirmModalDialogChecklistItem(this.getAttribute('data-id'),this.getAttribute('data-name'))">
+                                <i class="btn btn-outline-warning text-danger fas fa-trash-alt float-right mt-2 mr-4"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="text-center mb-5">
+                    <a class="btn btn-danger mb-5 mx-2" th:href="@{/checklist/}">Cancel</a>
+                    <button class="btn btn-success mb-5 mx-2 px-4" type="submit">Save</button>
+                </div>
+            </form>
+
+            <div class="modal fade" id="checklistItemId" tabindex="-1" role="dialog" aria-labelledby="modalTitle">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirmation</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Do you want to delete "<span id="checklistItemName"></span>"?
+                        </div>
+                        <div class="modal-footer">
+                            <a id="yesOptionChecklistItem" type="button" class="btn btn-danger">Yes</a>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </div>
+
+    <div id="home-footer" th:replace="~{/fragments/app-fragments :: copyright}">
+    </div>
+
+    <th:block id="home-static-resources">
+        <script type="text/javascript" th:src="@{/js/checklist_edit.js}"></script>
+    </th:block>
+
+</body>
+</html>
